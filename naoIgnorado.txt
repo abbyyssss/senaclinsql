@@ -1,0 +1,1 @@
+sou o arquivo que não será ignorado
