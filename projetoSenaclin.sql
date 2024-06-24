@@ -186,3 +186,79 @@ STATUS SMALLINT /*1*/ /*0*/  /*exclusão lógica*/
 UPDATE paciente
 SET STATUS = 0
 WHERE idPaciente = ?
+
+/*funções de agregação*/
+/*conta as ocorrências*/
+SELECT COUNT(idMedico) AS 'Quantidade de médicos'
+FROM medico
+WHERE crm LIKE '%SP'
+
+/*pega o valor máximo/maior:data, hora, inteirom decimal*/
+SELECT MAX(dataHoraConsulta) FROM consulta
+
+/*pega o valor mínimo/maior:data, hora, inteirom decimal*/
+SELECT min(dataHoraConsulta) FROM consulta
+
+ /*Realiza a soma dos valores*/
+ SELECT SUM(idRecepcionista) FROM recepcionista
+ 
+/*realiza a média aritmédica simples de determinados valores*/
+SELECT AVG(idPaciente) FROM paciente 
+
+
+SELECT * FROM paciente
+
+INSERT INTO paciente (nome,cpf, dataNascimento, tipoSanguineo)
+VALUES
+('Magali','55566677788','2001-07-07 06:55:00','0+'),
+('Mônica','99966677788','2002-10-02 13:22:00','0+'),
+('Cascão','55566611188','2000-07-07 11:21:00','B-'),
+('Penadinho','99966677799','2002-10-02 13:44:00','O-');
+
+SELECT tipoSanguineo AS 'Tipos sanguineos' ,
+          count(idPaciente) AS 'Total paciente'
+FROM paciente
+GROUP BY tipoSanguineo
+
+SELECT tipoSanguineo AS 'Tipos sanguíneos',
+       COUNT(idPaciente) AS 'Total de pacientes'
+FROM paciente
+GROUP BY tipoSanguineo
+ORDER BY COUNT(idPaciente) DESC
+
+/* where < algumacondicao */
+
+SELECT tipoSanguineo AS 'Tipos sanguíneos',
+       COUNT(idPaciente) AS 'Total de pacientes'
+FROM paciente
+WHERE idPaciente >= 2
+GROUP BY tipoSanguineo
+HAVING COUNT(idPaciente) >= 2
+ORDER BY COUNT(idPaciente);
+
+
+/***** join *****/
+/* Traga o nome do médico e a data da consulta marcada para ele
+levando em conta todos os médicos que possuem consultas */
+
+SELECT nomeMedico, crm, dataHoraConsulta FROM
+medico
+INNER JOIN consulta
+ON medico.idMedico = consulta.idMedico
+
+SELECT nomeMEdico, crm, dataHoraConsulta FROM
+medico
+left JOIN consulta
+ON medico.idMedico = consulta.idMedico
+
+SELECT * FROM consulta;
+SELECT * FROM medico;
+
+/*criar uma querry que traga o nome do recepcionista, o celular dele, e a data de consulta que ele marcou*/
+
+SELECT nomeRecepcionista,celular,dataHoraConsulta FROM recepcionista
+INNER JOIN consulta
+ON recepcionista.idRecepcionista=consulta.idRecepcionista
+
+/*criar uma query que traga o nome do paciente, seu documento, o nome do médico, o crm, a data da consulta e o recepcionista que a marcou*/
+
