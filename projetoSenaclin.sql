@@ -254,13 +254,13 @@ ON medico.idMedico = consulta.idMedico
 SELECT * FROM consulta;
 SELECT * FROM medico;
 
-/*criar uma querry que traga o nome do recepcionista, o celular dele, e a data de consulta que ele marcou*/
+/*A - criar uma querry que traga o nome do recepcionista, o celular dele, e a data de consulta que ele marcou*/
 
 SELECT nomeRecepcionista,celular,dataHoraConsulta FROM recepcionista
 INNER JOIN consulta
 ON recepcionista.idRecepcionista=consulta.idRecepcionista
 
-/*criar uma query que traga o nome do paciente, seu documento, o nome do médico, o crm, a data da consulta e o recepcionista que a marcou*/
+/* B -criar uma query que traga o nome do paciente, seu documento, o nome do médico, o crm, a data da consulta e o recepcionista que a marcou*/
 SELECT 
     paciente.nome AS Nome_Paciente,
     paciente.cpf AS Documento_Paciente,
@@ -315,3 +315,19 @@ LEFT JOIN
     medico ON consulta.idMedico = medico.idMedico
 ORDER BY 
     paciente.nome, consulta.dataHoraConsulta;
+
+
+/*desafio final- trazer a quantidade de consultas que possuo na clinica agrupada por tipo sanguineo do paciente*/
+
+SELECT
+    p.tipoSanguineo AS Tipo_Sanguineo,
+    COUNT(c.idConsulta) AS Quantidade_de_Consultas 
+FROM
+    paciente p
+LEFT JOIN
+    consulta c ON p.idPaciente = c.idPaciente
+GROUP BY 
+    p.tipoSanguineo 
+ORDER BY
+    p.tipoSanguineo;
+
