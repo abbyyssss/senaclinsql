@@ -261,4 +261,57 @@ INNER JOIN consulta
 ON recepcionista.idRecepcionista=consulta.idRecepcionista
 
 /*criar uma query que traga o nome do paciente, seu documento, o nome do médico, o crm, a data da consulta e o recepcionista que a marcou*/
+SELECT 
+    paciente.nome AS Nome_Paciente,
+    paciente.cpf AS Documento_Paciente,
+    medico.nomeMedico AS Nome_Médico,
+    medico.crm AS CRM_Médico,
+    consulta.dataHoraConsulta AS Data_Consulta,
+    recepcionista.nomeRecepcionista AS Nome_Recepcionista
+FROM 
+    consulta
+INNER JOIN 
+    paciente ON consulta.idPaciente = paciente.idPaciente
+INNER JOIN 
+    medico ON consulta.idMedico = medico.idMedico
+INNER JOIN 
+    recepcionista ON consulta.idRecepcionista = recepcionista.idRecepcionista;
 
+/*C - Criar uma query que traga quantas consultas existem 
+na clínica */
+ SELECT COUNT(*) AS Quantidade_de_Consultas
+FROM consulta;
+
+/*D - Criar uma query que traga o nome do paciente, o email,
+o tipo sanguineo e a data de suas consultas
+mas somente dos pacientes que possuem email*/
+ SELECT 
+    paciente.nome AS Nome_Paciente,
+    paciente.email AS Email_Paciente,
+    paciente.tipoSanguineo AS Tipo_Sanguineo,
+    consulta.dataHoraConsulta AS Data_Consulta
+FROM 
+    paciente
+INNER JOIN 
+    consulta ON paciente.idPaciente = consulta.idPaciente
+WHERE 
+    paciente.email IS NOT NULL AND paciente.email <> ''
+ORDER BY 
+    paciente.nome, consulta.dataHoraConsulta;
+
+/*E - Criar uma query que traga o nome de TODOS OS paciente, 
+o nome do médico, a data da consulta
+independente de os pacientes possuírem consultas */
+
+SELECT 
+    paciente.nome AS Nome_Paciente,
+    medico.nomeMedico AS Nome_Médico,
+    consulta.dataHoraConsulta AS Data_Consulta
+FROM 
+    paciente
+LEFT JOIN 
+    consulta ON paciente.idPaciente = consulta.idPaciente
+LEFT JOIN 
+    medico ON consulta.idMedico = medico.idMedico
+ORDER BY 
+    paciente.nome, consulta.dataHoraConsulta;
