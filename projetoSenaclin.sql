@@ -331,3 +331,151 @@ GROUP BY
 ORDER BY
     p.tipoSanguineo;
 
+
+
+/* View - Estrutura CREATE, DROP e ALTER*/
+CREATE VIEW vw_relatorioConsulta
+as
+SELECT nome AS 'Nome do paciente',cpf,nomeMedico AS 'Nome do médico',
+crm,dataHoraConsulta AS 'Data',nomeRecepcionista AS 'Nome do recepcionista' 
+FROM 
+paciente 
+INNER JOIN consulta
+ON paciente.idPaciente = consulta.idpaciente
+INNER JOIN medico 
+ON medico.idMedico = consulta.idMedico
+INNER JOIN recepcionista 
+ON recepcionista.idRecepcionista = consulta.idRecepcionista
+
+/*executar uma view*/
+
+SELECT * FROM vw_relatorioconsulta
+
+/*criar uma view com o desafio final*/
+CREATE VIEW vw_consultaTipoSanguineo
+as
+SELECT COUNT(consulta.idPaciente) AS 'Qtd Consulta',
+tipoSanguineo AS 'Tipo Sangue'
+FROM
+paciente 
+INNER JOIN consulta
+ON paciente.idPaciente = consulta.idPaciente
+GROUP BY tipoSanguineo
+
+/*executando a view */
+
+SELECT * FROM vw_consultatiposanguineo
+
+
+/*stored procedures ou procedimentos armazenados
+criando uma procedura para inserir algo
+CREATE / DROP / ALTER*/
+
+CREATE PROCEDURE pi_recepcionista
+(IN 
+nomeRecepcionista VARCHAR(50),
+loginRecepcionista VARCHAR(50),
+senha CHAR(8),
+celular CHAR(11),
+nomeLogradouro VARCHAR(50),
+numero VARCHAR(7),
+complemento VARCHAR(10),
+cidade VARCHAR(30),
+cep CHAR(11),
+estado CHAR(2)
+)
+INSERT INTO recepcionista 
+(nomeRecepcionista,loginRecepcionista,senha,celular,
+nomeLogradouro,numero,complemento,cidade,cep,estado)
+VALUES (nomeRecepcionista,loginRecepcionista,senha,celular,nomeLogradouro,numero,complemento,cidade,cep,estado);
+ 
+/*Chamar a stored procedure*/
+ 
+CALL pi_recepcionista ('Rosa da Silva','rosa.silva@gmail.com','22445677',
+'11974236584','Rua Patriarca','67',null,'São Paulo','11000000','SP')
+
+SELECT * FROM recepcionista
+
+DELETE from recepcionista WHERE idRecepcionista = 11
+
+DROP PROCEDURE pi_Recepcionista
+
+/*criando uma procedure para apagar o recepcionista*/
+CREATE PROCEDURE pd_DeleteRecepcionista (
+    IN idRec INT
+)
+DELETE FROM recepcionista WHERE idRecepcionista = idRec
+
+CALL pd_DeleteRecepcionista (12)
+
+/*criar uma procedure que liste nome do cliente e tipo sanguineo de todos os pacientes de determinado tipo sanguineo*/
+
+
+CREATE PROCEDURE ps_listarPacientesPorTipoSanguineo (
+    IN tipoSangue VARCHAR(3)
+)
+SELECT nome AS 'Nome do Paciente', tipoSanguineo AS 'Tipo Sanguíneo'
+FROM paciente
+WHERE tipoSanguineo = tipoSangue;
+
+CALL ps_listarPacientesPorTipoSanguineo('0+');
+
+
+/*Crie uma procedure que mostrra todas ass consultas de acordo com o id do médico ordenada por data - AGENDA DO MÉDICO.*/
+
+CREATE PROCEDURE pb_agenda_do_medico (
+    IN idMedico INT
+)
+SELECT 
+    c.idConsulta,
+    p.nome AS 'Nome do Paciente',
+    m.nomeMedico AS 'Nome do Médico',
+    c.dataHoraConsulta AS 'Data da Consulta',
+    r.nomeRecepcionista AS 'Nome do Recepcionista'
+FROM 
+    consulta c
+INNER JOIN 
+    paciente p ON c.idPaciente = p.idPaciente
+INNER JOIN 
+    medico m ON c.idMedico = m.idMedico
+INNER JOIN 
+    recepcionista r ON c.idRecepcionista = r.idRecepcionista
+WHERE 
+    c.idMedico = idMedico
+ORDER BY 
+    c.dataHoraConsulta;
+
+
+CALL pb_agenda_do_medico(1);
+
+/*criar uma procedura que conta o total de consultas que possuo na clínica*/
+
+CREATE PROCEDURE ps_mostrarQTDconsultas ()
+SELECT COUNT(idConsulta) AS 'Total consultas' FROM consulta
+
+CALL ps_mostrarQTDconsultas
+
+/*criar uma procedure que mostre o nome do paciente, a data da consulta e o nome do médico, de acordo com o nome do paciente informado*/
+
+
+CREATE PROCEDURE ps_consultasPorPaciente (
+    IN nomePaciente VARCHAR(50)
+)
+    SELECT 
+        p.nome AS 'Nome do Paciente',
+        c.dataHoraConsulta AS 'Data da Consulta',
+        m.nomeMedico AS 'Nome do Médico'
+    FROM 
+        consulta c
+    INNER JOIN 
+        paciente p ON c.idPaciente = p.idPaciente
+    INNER JOIN 
+        medico m ON c.idMedico = m.idMedico
+    WHERE 
+        p.nome = nomePaciente;
+
+
+
+CALL ps_consultasPorPaciente('Pedro');
+
+SELECT * FROM paciente
